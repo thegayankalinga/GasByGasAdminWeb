@@ -1,0 +1,19 @@
+.server-error-message {
+    color: hsl(0, 90%, 40%);
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.66;
+    text-align: left;
+    margin-top: 3px;
+    margin-bottom: 0;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

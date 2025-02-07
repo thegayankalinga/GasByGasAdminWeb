@@ -1,0 +1,9 @@
+.ps-sidebar-container{
+    scrollbar-color: #999797 #3b3b3b;
+    scrollbar-width: thin;
+}
+
+.MuiBox-root{
+    scrollbar-color: #999797 #3b3b3b;
+    scrollbar-width: thin;
+}
