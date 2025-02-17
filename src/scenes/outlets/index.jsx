@@ -3,41 +3,34 @@ import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import {
     Box,
-    Button,
-    IconButton,
-    Typography,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
 import { Header, ProgressCircle, StatBox } from "../../components";
 import { tokens } from "../../theme/theme";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import OutletService from "./../../services/outlet.service";
-
-const columns = [
-    { field: "outletName", headerName: "Outlet Name", width: 200 },
-    { field: "outletAddress", headerName: "Outlet Address", width: 200 },
-    { field: "city", headerName: "City", type: "number", width: 200 }
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
+import userService from "./../../services/user.service"
 
 function Outlets() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const theme = useTheme();
+    const user = userService.getCurrentUser();
     const colors = tokens(theme.palette.mode);
-    const isXlDevices = useMediaQuery("(min-width: 1260px)");
-    const isMdDevices = useMediaQuery("(min-width: 724px)");
-    const isXsDevices = useMediaQuery("(max-width: 436px)");
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await OutletService.getAllOutlet();
+                const response = await OutletService.getOutlet(user.outletId);
                 if (response) {
                     setData(response);
                 } else {
@@ -72,18 +65,57 @@ function Outlets() {
     return (
         <Box m="20px">
             <Box display="flex" justifyContent="space-between">
-                <Header title="Outlets" subtitle="Gas By Gas Outlets" />
+                <Header title="Outlet Details" />
             </Box>
-            <Paper sx={{ height: 400, width: "100%" }}>
-                <DataGrid
-                    rows={data}
-                    columns={columns}
-                    initialState={{ pagination: { paginationModel } }}
-                    pageSizeOptions={[5, 10, 20]}
-                    sx={{ border: 0 }}
-                />
-            </Paper>
 
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell size="medium">Fields</TableCell>
+                            <TableCell align="left" size="medium">Details</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+
+                        <TableRow
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell align="left">Outlet Name</TableCell>
+                            <TableCell align="left">{data.outletName}</TableCell>
+                        </TableRow>
+
+                        <TableRow
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell align="left">Outlet Address</TableCell>
+                            <TableCell align="left">{data.outletAddress}</TableCell>
+                        </TableRow>
+
+                        <TableRow
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell align="left">Outlet City</TableCell>
+                            <TableCell align="left">{data.city}</TableCell>
+                        </TableRow>
+
+                        <TableRow
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell align="left">Outlet Manager Name</TableCell>
+                            <TableCell align="left">{user.fullName}</TableCell>
+                        </TableRow>
+
+                        <TableRow
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell align="left">Outlet Manager Email Address</TableCell>
+                            <TableCell align="left">{user.email}</TableCell>
+                        </TableRow>
+
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     );
 }

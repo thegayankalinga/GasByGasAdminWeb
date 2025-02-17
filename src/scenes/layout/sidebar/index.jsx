@@ -167,6 +167,7 @@ const SideBar = () => {
               colors={colors}
               icon={<WarehouseIcon />}
             />
+            
 
             <Item
               title="Managers"
@@ -174,6 +175,36 @@ const SideBar = () => {
               colors={colors}
               icon={<PeopleAltOutlined />}
             />
+          </Menu>
+          <Typography
+            variant="h6"
+            color={colors.gray[300]}
+            sx={{ m: "15px 0 5px 20px" }}
+          >
+            {!collapsed ? "Users" : " "}
+          {!collapsed ? "Users" : " "}
+          </Typography>{" "}
+          <Menu
+            menuItemStyles={{
+              button: {
+                ":hover": {
+                  color: "#868dfb",
+                  background: "transparent",
+                  transition: ".4s ease",
+                },
+              },
+            }}
+          >
+
+            <Item
+              title="User Management"
+              path="/admin/outlets"
+              colors={colors}
+              icon={<WarehouseIcon />}
+            />
+            
+
+           
           </Menu>
         </Box>
         :
@@ -224,7 +255,7 @@ const SideBar = () => {
           >
 
             <Item
-              title="Outlets"
+              title="Outlet Details"
               path="/manager/outlets"
               colors={colors}
               icon={<PeopleAltOutlined />}
