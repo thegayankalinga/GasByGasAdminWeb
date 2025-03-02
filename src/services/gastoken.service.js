@@ -19,9 +19,22 @@ class GasTokenService {
 
   createReq(body, param) {
     return axios
-      .post(API_URL + "gastoken", body, { headers: authHeader(), params: param })
+      .post(API_URL + "gastoken", body, { headers: authHeader() })
       .then(response => {
         if (response.status == 201) {
+          return response.data;
+        }
+        else {
+          console.log('something missing');
+        }
+      });
+  }
+
+  updateReq(body, id) {
+    return axios
+      .put(API_URL + "gastoken/update/"+id, body, { headers: authHeader() })
+      .then(response => {
+        if (response.status == 200) {
           return response.data;
         }
         else {

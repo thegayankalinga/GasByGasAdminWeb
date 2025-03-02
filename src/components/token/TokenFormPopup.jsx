@@ -3,10 +3,11 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, S
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';  // Import dayjs for date manipulation
+import dayjs from 'dayjs'; // Import dayjs for date manipulation
 
 function TokenFormPopup({ open, handleClose, handleSubmit, outletOptions, rowData }) {
     const [formData, setFormData] = useState({
+        id: "",
         readyDate: null,
         expectedPickupDate: null,
         status: "",
@@ -21,7 +22,8 @@ function TokenFormPopup({ open, handleClose, handleSubmit, outletOptions, rowDat
     useEffect(() => {
         if (rowData) {
             setFormData({
-                readyDate: rowData.readyDate ? dayjs(rowData.readyDate) : null,  // Ensure valid Dayjs object
+                id: rowData.id || "",
+                readyDate: rowData.readyDate ? dayjs(rowData.readyDate) : null,
                 expectedPickupDate: rowData.expectedPickupDate ? dayjs(rowData.expectedPickupDate) : null,
                 status: rowData.status || "",
                 isEmpltyCylindersGiven: rowData.isEmpltyCylindersGiven || false,
@@ -53,6 +55,15 @@ function TokenFormPopup({ open, handleClose, handleSubmit, outletOptions, rowDat
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>{rowData ? "Edit Gas Request" : "Create New Gas Request"}</DialogTitle>
                 <DialogContent>
+                    <TextField
+                        label="ID"
+                        name="id"
+                        value={formData.id}
+                        fullWidth
+                        margin="dense"
+                        style={{ display: 'none' }} // Hide the ID field
+                    />
+
                     <DatePicker
                         label="Ready Date"
                         value={formData.readyDate}
@@ -67,14 +78,19 @@ function TokenFormPopup({ open, handleClose, handleSubmit, outletOptions, rowDat
                         renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
                     />
 
-                    <TextField
-                        label="Status"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="dense"
-                    />
+                    <FormControl fullWidth margin="dense">
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value={1}>Pending</MenuItem>
+                            <MenuItem value={2}>Assigned</MenuItem>
+                            <MenuItem value={3}>Completed</MenuItem>
+                            <MenuItem value={4}>Cancelled</MenuItem>
+                        </Select>
+                    </FormControl>
 
                     <FormControl fullWidth margin="dense">
                         <InputLabel>Empty Cylinders Given</InputLabel>

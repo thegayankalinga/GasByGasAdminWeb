@@ -233,6 +233,12 @@ const SideBar = () => {
               colors={colors}
               icon={<ReceiptOutlined />}
             />
+             <Item
+              title="Users"
+              path="/manager/users"
+              colors={colors}
+              icon={<PeopleAltOutlined />}
+            />
 
           </Menu>
           <Typography
@@ -258,7 +264,7 @@ const SideBar = () => {
               title="Outlet Details"
               path="/manager/outlets"
               colors={colors}
-              icon={<PeopleAltOutlined />}
+              icon={<ReceiptOutlined />}
             />
           </Menu>
         </Box>

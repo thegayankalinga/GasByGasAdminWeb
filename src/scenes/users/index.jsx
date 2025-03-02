@@ -16,8 +16,9 @@ import userService from "./../../services/user.service";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Edit } from "@mui/icons-material";
+import notificationService from "../../services/notification.service";
 
-function Tokens() {
+function Users() {
     const user = userService.getCurrentUser();
     const [data, setData] = useState(null);
     const [outlets, setOutlets] = useState(null);
@@ -129,8 +130,24 @@ function Tokens() {
 
         try {
             const response = await GasTokenService.updateReq(body,formData.id);
+            let statusString;
+            
             if (response) {
                 toast.success('Gas Request Successfully Updated.');
+                switch (response.status) {
+                    case 1: statusString = "Pending"; break;
+                    case 2: statusString = "Assigned"; break;
+                    case 3: statusString = "Completed"; break;
+                    case 4: statusString = "Cancelled"; break;
+                    default: statusString = "Unknown"; 
+                }
+                const isEmpltyCylindersGiven = (response.isEmpltyCylindersGiven)?"Recieved":"Not yet";
+                const isPaid = (response.isPaid)?"Recived":"Not yet";
+                const mess = "Dear sir, <br>Your request successfully updated by outlet Manager<br><br>Expected PickupDate:"+response.expectedPickupDate+"<br>"+"<br>Emplty Cylinders Given: "+ isEmpltyCylindersGiven+"<br>"+"<br>Payment: "+ isPaid+"<br>"+"<br>Payment Date:"+response.paymentDate+"<br>"+"<br>Ready Date:"+response.readyDate+"<br>"+"<br>Request Date:"+response.requestDate+"<br>"+"<br>Status:"+statusString;
+                const resMail = notificationService.sendEmail(response.userEmail,"GBG","Your token successfully updated",mess);
+                // const resSms = notificationService.sendSms(user.phoneNumber,
+                //     "Dear sir, Your request successfully saved.  Expected PickupDate:"+response.expectedPickupDate+"<br>"
+                // );
                 fetchData();
             } else {
                 toast.error('Something missing');
@@ -192,4 +209,4 @@ function Tokens() {
     );
 }
 
-export default Tokens;
+export default Users;

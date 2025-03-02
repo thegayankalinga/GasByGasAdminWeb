@@ -11,7 +11,7 @@ import {
     Dashboard,
     Outlets,
     Team,
-    Tokens
+    Tokens,Users
 } from "./../scenes";
 
 import {
@@ -53,8 +53,8 @@ const Routes = () => {
                     element: <Outlets/>,
                 },
                 {
-                    path: "/manager/team",
-                    element: <Team />,
+                    path: "/manager/users",
+                    element: <Users />,
                 }
             ],
         },
