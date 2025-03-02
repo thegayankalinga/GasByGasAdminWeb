@@ -26,8 +26,9 @@ class AuthService {
     return true;
   }
 
-  register(email, password, fullName, nic, phoneNumber, address, city, businessRegistration, userType, noOfCylindersAllowed) {
+  register(outletId,email, password, fullName, nic, phoneNumber, address, city, userType) {
     return axios.post(API_URL + "account/register", {
+      outletId,
       email,
       password,
       fullName,
@@ -35,9 +36,7 @@ class AuthService {
       phoneNumber,
       address,
       city,
-      businessRegistration,
       userType,
-      noOfCylindersAllowed
     }).then(response => {
       if (response.status == 200 && response.data) {
         return response.data;

@@ -6,23 +6,27 @@ import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useNavigate } from "react-router-dom";
 import Divider from '@mui/material/Divider';
-import OutletService from "./../../services/outlet.service";
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
+import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from 'react-router-dom';
+import { tokens } from "../../theme/theme";
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import CircularProgress from "@mui/material/CircularProgress";
+import { useState, useEffect } from 'react';
+import {  useTheme,} from "@mui/material";
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from './../../theme/AppTheme';
 import AuthService from "./../../services/auth/auth.service";
 import SelectableCity from '../../components/fields/SelectableCity';
 import UserTypeSelect from '../../components/fields/UserTypeSelect';
+import OutletSelect from '../../components/fields/OutletSelect';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './style.css';
+import OutletService from "./../../services/outlet.service";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -79,30 +83,33 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = React.useState('');
   const [addressError, setAddressError] = React.useState(false);
   const [addressErrorMessage, setAddressErrorMessage] = React.useState('');
+  const [businessRegistrationError, setBusinessRegistrationError] = React.useState(false);
+  const [businessRegistrationErrorMessage, setBusinessRegistrationErrorMessage] = React.useState('');
+  const [noOfCylindersAllowedError, setNoOfCylindersAllowedError] = React.useState(false);
+  const [noOfCylindersAllowedErrorMessage, setNoOfCylindersAllowedErrorMessage] = React.useState('');
   const [selectedCity, setSelectedCity] = React.useState('');
-  const [outletOptions, setOutletOptions] = React.useState<any[]>([]);
-  const [selectedOutlet, setSelectedOutlet] = React.useState('');
-  const [outletError, setOutletError] = React.useState(false);
-  const [outletErrorMessage, setOutletErrorMessage] = React.useState('');
+  const [selectedUserType, setSelectedUserType] = React.useState('');
+  const [selectedOutlet, setselectedOutlet] = React.useState('');
   const [errors, setErrors] = React.useState({});
+  const [outlets, setOutlets] = React.useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+    const theme = useTheme();
+      const colors = tokens(theme.palette.mode);
 
   const handleCityChange = (selectedCity) => {
     setSelectedCity(selectedCity.value);
   };
 
-  const fetchOutletOptions = async () => {
-    try {
-      const response = await OutletService.getAllOutlet();
-      setOutletOptions(response.data); 
-    } catch (error) {
-      console.log("Error fetching outlet options:", error);
-    }
+  const handleUserTypeChange = (selectedUserType) => {
+    setSelectedUserType(selectedUserType);
   };
 
-  React.useEffect(() => {
-    fetchOutletOptions();
-  }, []);
+  const handleOutletChange = (selectedOutlet) => {
+    setselectedOutlet(selectedOutlet.value);
+  };
+
 
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
@@ -134,6 +141,29 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     } else {
       setEmailError(false);
       setEmailErrorMessage('');
+    }
+
+    if (selectedUserType.value != 0) {
+      const businessRegistration = document.getElementById('businessRegistration') as HTMLInputElement;
+      const noOfCylindersAllowed = document.getElementById('noOfCylindersAllowed') as HTMLInputElement;
+
+      if (!businessRegistration.value) {
+        setBusinessRegistrationError(true);
+        setBusinessRegistrationErrorMessage('Please enter the Business Registration number.');
+        isValid = false;
+      } else if (!noOfCylindersAllowed.value) {
+        setNoOfCylindersAllowedError(true);
+        setNoOfCylindersAllowedErrorMessage('Please enter the number of cylinder you want per month.');
+        isValid = false;
+        setBusinessRegistrationError(false);
+        setBusinessRegistrationErrorMessage('');
+      }
+      else {
+        setNoOfCylindersAllowedError(false);
+        setNoOfCylindersAllowedErrorMessage('');
+        setBusinessRegistrationError(false);
+        setBusinessRegistrationErrorMessage('');
+      }
     }
 
     if (!address.value) {
@@ -185,6 +215,26 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
+  useEffect(() => {
+    const fetchOutlets = async () => {
+      setLoading(true);
+      setError(null); // Reset error state
+      try {
+        const outLetData = await OutletService.getAllOutlet();
+        console.log(outLetData)
+        setOutlets(outLetData);
+        setLoading(false);
+
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        console.log(err)
+      }
+    };
+
+    fetchOutlets();
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     if (nameError || emailError || passwordError || nicError || phoneNumberError || addressError) {
       event.preventDefault();
@@ -193,7 +243,8 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     const data = new FormData(event.currentTarget);
     event.preventDefault();
     try {
-      const loginResponse = await AuthService.register(data.get('email'), data.get('password'), data.get('fullname'), data.get('nic'), data.get('phoneNumber'), data.get('address'), data.get('city'), selectedUserType.label);
+      const outletId = selectedOutlet;
+      const loginResponse = await AuthService.register(outletId,data.get('email'), data.get('password'), data.get('fullname'), data.get('nic'), data.get('phoneNumber'), data.get('address'), data.get('city'), "Manager");
       if (loginResponse && loginResponse.token) {
         setErrors([]);
         toast.success('Registration successful! please login');
@@ -225,6 +276,22 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
     }
   };
 
+  if (loading) {
+    return <Box
+    sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh', // Full viewport height
+    }}
+>
+    <CircularProgress color="primary" sx={{ color: colors.blueAccent[700] }} />      </Box>;
+  }
+
+  if (error) {
+    return <p>Error fetching outlets: {error.message}</p>;
+  }
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -234,7 +301,6 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
           <Typography
             component="h1"
             variant="h4"
-            align="center"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
             Sign up
@@ -304,6 +370,7 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
               <p class="server-error-message">
                 {error} </p>
             ))}
+            
             <FormControl>
               <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
               <TextField
@@ -363,10 +430,12 @@ export default function Register(props: { disableCustomTheme?: boolean }) {
               ))}
             </FormControl>
 
+            <OutletSelect name="outletId" onOutletSelect={handleOutletChange} outlets={outlets} />
+
             <Button
               type="submit"
               fullWidth
-              variant="outlined"
+              variant="contained"
               onClick={validateInputs}
             >
               Sign up
