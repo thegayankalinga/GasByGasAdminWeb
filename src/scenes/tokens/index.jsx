@@ -5,6 +5,9 @@ import IconButton from "@mui/material/IconButton";
 import { Box, Button, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Header } from "../../components";
 import { CreateRounded } from "@mui/icons-material";
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import autoTable from "jspdf-autotable";
 import { tokens } from "../../theme/theme";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
@@ -29,7 +32,7 @@ function Tokens() {
     const colors = tokens(theme.palette.mode);
     const isMdDevices = useMediaQuery("(min-width: 724px)");
     const isXsDevices = useMediaQuery("(max-width: 436px)");
-    const [rowData, setRowData] = useState(null); 
+    const [rowData, setRowData] = useState(null);
 
     const columns = [
         { field: "id", headerName: "Id", type: "number", width: 5 },
@@ -61,10 +64,10 @@ function Tokens() {
                 }
             },
         },
-        { 
-            field: "edit", 
-            headerName: "Action", 
-            width: 100, 
+        {
+            field: "edit",
+            headerName: "Action",
+            width: 100,
             renderCell: (params) => (
                 <IconButton onClick={() => handlePopupOpen(params.row)}>
                     <Edit />
@@ -72,7 +75,7 @@ function Tokens() {
             )
         }
     ];
-    
+
     const paginationModel = { page: 0, pageSize: 5 };
 
     const fetchData = async () => {
@@ -113,22 +116,53 @@ function Tokens() {
         setSearchEmail(e.target.value);
     };
 
+    const downloadPDF = () => {
+        const doc = new jsPDF();
+
+        // Define table headers and data
+        const columns = ["Id", "Date", "Expected Pickup Date", "Empty Cylinder", "Payment", "Payment Date", "Cylinder Collectable Date", "Outlet Name", "Outlet Address", "City", "Token Status"];
+        const rows = data?.map((row) => [
+            row.id,
+            row.requestDate,
+            row.expectedPickupDate,
+            row.isEmpltyCylindersGiven ? "Received" : "Not Yet",
+            row.isPaid ? "Received" : "Not Yet",
+            row.paymentDate || "_",
+            row.readyDate || "_",
+            row.outletName,
+            row.outletAddress,
+            row.outletCity,
+            row.status === 1 ? "Pending" : row.status === 2 ? "Assigned" : row.status === 3 ? "Completed" : row.status === 4 ? "Cancelled" : "Unknown"
+        ]);
+
+        // Add table to PDF
+        autoTable(doc, {
+            head: [columns],
+            body: rows,
+        });
+
+        // Save the PDF
+        doc.save("User_Management_Data.pdf");
+    };
+
+
+
     const handleFormSubmit = async (formData) => {
         setLoading(true);
         const body = {
-            "expectedPickupDate" : formData.expectedPickupDate.format("YYYY-MM-DD"),
-            "paymentDate" : formData.paymentDate.format("YYYY-MM-DD"),
-            "outletId" :  formData.outletID,
-            "status" : formData.status,
-            "userEmail" : formData.userEmail,
-            "deliveryScheduleId" : formData.deliveryScheduleId,
-            "isEmpltyCylindersGivent" :formData.isEmpltyCylindersGiven ,
-            "isPaid" : formData.isPaid,
-            "readyDate" : formData.readyDate.format("YYYY-MM-DD"),
+            "expectedPickupDate": formData.expectedPickupDate.format("YYYY-MM-DD"),
+            "paymentDate": formData.paymentDate.format("YYYY-MM-DD"),
+            "outletId": formData.outletID,
+            "status": formData.status,
+            "userEmail": formData.userEmail,
+            "deliveryScheduleId": formData.deliveryScheduleId,
+            "isEmpltyCylindersGivent": formData.isEmpltyCylindersGiven,
+            "isPaid": formData.isPaid,
+            "readyDate": formData.readyDate.format("YYYY-MM-DD"),
         };
 
         try {
-            const response = await GasTokenService.updateReq(body,formData.id);
+            const response = await GasTokenService.updateReq(body, formData.id);
             if (response) {
                 toast.success('Gas Request Successfully Updated.');
                 fetchData();
@@ -178,12 +212,15 @@ function Tokens() {
                     sx={{ width: '300px', marginBottom: '20px' }}
                 />
             </Box>
+            <Button variant="contained" color="primary" onClick={downloadPDF}>
+                Download as PDF
+            </Button>
             <Paper sx={{ height: 400, width: "100%" }}>
                 <DataGrid
                     rows={filteredData || []}
                     columns={columns}
                     initialState={{ pagination: { paginationModel } }}
-                    pageSizeOptions={[5, 10, 20]}
+                    pageSizeOptions={[5, 10, 100]}
                     sx={{ border: 0 }}
                 />
             </Paper>
