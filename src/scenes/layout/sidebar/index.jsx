@@ -31,7 +31,7 @@ const SideBar = () => {
 
   return (
     <Sidebar
-      backgroundColor={colors.primary[400]} 
+      backgroundColor={colors.primary[400]}
       rootStyles={{
         border: 0,
         height: "100%",
@@ -168,7 +168,7 @@ const SideBar = () => {
               colors={colors}
               icon={<WarehouseIcon />}
             />
-            
+
 
             <Item
               title="Managers"
@@ -183,8 +183,9 @@ const SideBar = () => {
             sx={{ m: "15px 0 5px 20px" }}
           >
             {!collapsed ? "Users" : " "}
-          {!collapsed ? "Users" : " "}
+            {!collapsed ? "Users" : " "}
           </Typography>{" "}
+
           <Menu
             menuItemStyles={{
               button: {
@@ -198,8 +199,28 @@ const SideBar = () => {
           >
 
             <Item
-              title="User Management"
-              path="/admin/outlets"
+              title="Stock"
+              path="/admin/stock"
+              colors={colors}
+              icon={<WarehouseIcon />}
+            />
+          </Menu>
+
+          <Menu
+            menuItemStyles={{
+              button: {
+                ":hover": {
+                  color: "#868dfb",
+                  background: "transparent",
+                  transition: ".4s ease",
+                },
+              },
+            }}
+          >
+
+            <Item
+              title="Delivery"
+              path="/admin/delivery"
               colors={colors}
               icon={<WarehouseIcon />}
             />
@@ -224,7 +245,7 @@ const SideBar = () => {
               colors={colors}
               icon={<DashboardOutlined />}
             />
-            
+
 
             <Item
               title="Gas Token"
@@ -232,7 +253,7 @@ const SideBar = () => {
               colors={colors}
               icon={<ReceiptOutlined />}
             />
-             <Item
+            <Item
               title="Users"
               path="/manager/users"
               colors={colors}

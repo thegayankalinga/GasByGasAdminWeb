@@ -17,7 +17,9 @@ import {
 import {
     AdminDashboard,
     UserManagement,
-    OutLets
+    OutLets,
+    StockAdmin,
+    DeliverySchedule
 } from "./../scenes/admin";
 
 const Routes = () => {
@@ -72,6 +74,14 @@ const Routes = () => {
                 {
                     path: "/admin/",
                     element: <AdminDashboard />,
+                },
+                {
+                    path: "/admin/stock",
+                    element: <StockAdmin/>,
+                },
+                {
+                    path: "/admin/delivery",
+                    element: <DeliverySchedule />,
                 },
                 {
                     path: "/admin/users",
