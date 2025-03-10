@@ -81,7 +81,7 @@ function Tokens() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await GasTokenService.getAll();
+            const response = await GasTokenService.getByOutletId(user.outletId);
             if (response) {
                 const outlets = await OutletService.getAllOutlet();
                 setOutlets(outlets);

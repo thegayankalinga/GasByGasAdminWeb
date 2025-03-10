@@ -17,6 +17,19 @@ class OutletService {
     });
   }
 
+  addOutlet(data) {
+    return axios
+    .post(API_URL + "outlet",data, { headers: authHeader() })
+    .then(response => {
+      if (response.status == 201) {
+        return response;
+      }
+      else {
+        console.log('something missing');
+      }
+    });
+  }
+
   getOutlet(id) {
     return axios
     .get(API_URL + "outlet/"+id, { headers: authHeader() })

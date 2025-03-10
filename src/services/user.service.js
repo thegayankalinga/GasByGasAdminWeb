@@ -1,28 +1,28 @@
 import axios from 'axios';
 import authHeader from './auth/auth-header';
 
-const API_URL = 'http://localhost:8080/api/test/';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 class UserService {
 
   getCurrentUser() {
     return JSON.parse(localStorage.getItem('user'));;
   }
-  
-  getPublicContent() {
-    return axios.get(API_URL + 'all');
+
+  getConsumers() {
+    return axios.get(API_URL + '/account/getConsumers', { headers: authHeader() });
   }
 
-  getUserBoard() {
-    return axios.get(API_URL + 'user', { headers: authHeader() });
+  updateCylindersAllowed(email, data) {
+    return axios.put(API_URL + '/account/updateAllowedCylinders/'+email, data, { headers: authHeader() });
   }
 
-  getModeratorBoard() {
-    return axios.get(API_URL + 'mod', { headers: authHeader() });
+  updateIsConfirm(email, data) {
+    return axios.put(API_URL + '/account/updateConfirmStatus/'+email, data, { headers: authHeader() });
   }
 
-  getAdminBoard() {
-    return axios.get(API_URL + 'admin', { headers: authHeader() });
+  updateRemainingCylinders(email, data) {
+    return axios.put(API_URL + '/account/updateReminaingCylinders/'+email, data, { headers: authHeader() });
   }
 }
 

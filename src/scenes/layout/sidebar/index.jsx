@@ -10,6 +10,7 @@ import {
   HelpOutlineOutlined,
   MenuOutlined,
   PeopleAltOutlined,
+  Inventory2Outlined,
   PersonOutlined,
   ReceiptOutlined,
   WavesOutlined,
@@ -30,7 +31,7 @@ const SideBar = () => {
 
   return (
     <Sidebar
-      backgroundColor={colors.primary[400]}
+      backgroundColor={colors.primary[400]} 
       rootStyles={{
         border: 0,
         height: "100%",
@@ -202,9 +203,6 @@ const SideBar = () => {
               colors={colors}
               icon={<WarehouseIcon />}
             />
-            
-
-           
           </Menu>
         </Box>
         :
@@ -226,6 +224,7 @@ const SideBar = () => {
               colors={colors}
               icon={<DashboardOutlined />}
             />
+            
 
             <Item
               title="Gas Token"
@@ -238,6 +237,12 @@ const SideBar = () => {
               path="/manager/users"
               colors={colors}
               icon={<PeopleAltOutlined />}
+            />
+            <Item
+              title="Stock"
+              path="/manager/stock"
+              colors={colors}
+              icon={<Inventory2Outlined />}
             />
 
           </Menu>

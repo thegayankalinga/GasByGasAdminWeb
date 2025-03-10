@@ -19,10 +19,10 @@ class AuthService {
         }
       });
   }
-
   logout() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    window.location.href = "/"; // Redirect to the root URL
     return true;
   }
 

@@ -17,6 +17,19 @@ class GasTokenService {
       });
   }
 
+  getByOutletId(outletsId) {
+    return axios
+      .get(API_URL + "gastoken/byoutlet/"+outletsId, { headers: authHeader() })
+      .then(response => {
+        if (response.status == 200) {
+          return response.data;
+        }
+        else {
+          console.log('something missing');
+        }
+      });
+  }
+
   createReq(body, param) {
     return axios
       .post(API_URL + "gastoken", body, { headers: authHeader() })

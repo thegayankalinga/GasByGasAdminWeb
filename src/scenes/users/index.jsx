@@ -4,22 +4,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import { Box, Button, TextField, useMediaQuery, useTheme, Paper } from "@mui/material";
 import { Header } from "../../components";
-import { CreateRounded, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import { tokens } from "../../theme/theme";
 import { DataGrid } from "@mui/x-data-grid";
-import GasTokenService from "./../../services/gastoken.service";
-import OutletService from "./../../services/outlet.service";
-import TokenFormPopup from "./../../components/token/TokenFormPopup";
 import userService from "./../../services/user.service";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import notificationService from "../../services/notification.service";
+import UserUpdatePopup from "./../../components/user/UserUpdatePopup";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 function Users() {
-    const [data, setData] = useState(null);
-    const [outlets, setOutlets] = useState(null);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchEmail, setSearchEmail] = useState("");
@@ -29,11 +25,30 @@ function Users() {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "Id", width: 50 },
-        { field: "requestDate", headerName: "Date", width: 100 },
-        { field: "expectedPickupDate", headerName: "Expected Pickup Date", width: 120 },
-        { field: "outletName", headerName: "Outlet Name", width: 150 },
-        { field: "status", headerName: "Status", width: 100 },
+        { field: "email", headerName: "Email", width: 100 },
+        { field: "fullName", headerName: "Full name", width: 120 },
+        { field: "nic", headerName: "Nic", width: 150 },
+        { field: "isConfirm", headerName: "Is Active", width: 100 },
+        { field: "phoneNumber", headerName: "Phone number", width: 100 },
+        { field: "address", headerName: "Address", width: 100 },
+        { field: "city", headerName: "City", width: 100 },
+        {
+            field: "userType",
+            headerName: "User Type",
+            width: 100,
+            valueGetter: (params) => {
+                switch (params.userType) {
+                    case 0:
+                        return "Personal";
+                    case 1:
+                        return "Business";
+                    case 2:
+                        return "Industry";
+                    default:
+                        return "Unknown";
+                }
+            },
+        },
         {
             field: "edit",
             headerName: "Action",
@@ -42,8 +57,8 @@ function Users() {
                 <IconButton onClick={() => handlePopupOpen(params.row)}>
                     <Edit />
                 </IconButton>
-            )
-        }
+            ),
+        },
     ];
 
     useEffect(() => {
@@ -53,10 +68,8 @@ function Users() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await GasTokenService.getAll();
-            const outletsData = await OutletService.getAllOutlet();
-            setOutlets(outletsData);
-            setData(response);
+            const response = await userService.getConsumers();
+            setData(response.data);
         } catch (error) {
             setError(error);
         } finally {
@@ -75,7 +88,7 @@ function Users() {
         setSearchEmail(e.target.value);
     };
 
-    const filteredData = data?.filter(row => row.userEmail?.toLowerCase().includes(searchEmail.toLowerCase()));
+    const filteredData = data.filter(row => row.email?.toLowerCase().includes(searchEmail.toLowerCase()));
 
     const downloadPDF = () => {
         const doc = new jsPDF();
@@ -104,16 +117,26 @@ function Users() {
         <Box m="20px">
             <ToastContainer />
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Header title="User Management" subtitle="Manage Users & Requests" />
+                <Header title="User Management" subtitle="List of outlet consumers" />
                 <Box>
                     <TextField label="Search by Email" variant="outlined" value={searchEmail} onChange={handleSearchChange} sx={{ mr: 2 }} />
                     <Button variant="contained" color="primary" onClick={downloadPDF}>Download as PDF</Button>
                 </Box>
             </Box>
             <Paper sx={{ height: 400, width: "100%" }}>
-                <DataGrid rows={filteredData || []} columns={columns} pageSizeOptions={[5, 10, 20]} />
+                <DataGrid
+                    rows={filteredData || []}
+                    columns={columns}
+                    pageSizeOptions={[5, 10, 20]}
+                    getRowId={(row) => row.email}
+                />
             </Paper>
-            <TokenFormPopup open={isPopupOpen} handleClose={handlePopupClose} rowData={rowData} />
+            <UserUpdatePopup
+                open={isPopupOpen}
+                handleClose={handlePopupClose}
+                rowData={rowData}
+                fetchData={fetchData} // Pass fetchData to the popup
+            />
         </Box>
     );
 }

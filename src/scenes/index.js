@@ -9,6 +9,7 @@ import FAQ from "./faq";
 import Outlets from "./outlets";
 import Tokens from "./tokens";
 import Users from "./users";
+import Stock from "./stock";
 
 export {
   Navbar,
@@ -21,5 +22,6 @@ export {
   FAQ,
   Outlets,
   Tokens,
-  Users
+  Users,
+  Stock
 };

@@ -11,7 +11,7 @@ import {
     Dashboard,
     Outlets,
     Team,
-    Tokens,Users
+    Tokens, Users,Stock
 } from "./../scenes";
 
 import {
@@ -27,11 +27,11 @@ const Routes = () => {
     const routesForPublic = [
         {
             path: "/",
-            element: <Home/>,
+            element: <Home />,
         },
         {
             path: "*",
-            element: <NotFound/>,
+            element: <NotFound />,
         }
     ];
 
@@ -45,12 +45,16 @@ const Routes = () => {
                     element: <Dashboard />,
                 },
                 {
+                    path: "/manager/stock/",
+                    element: <Stock />,
+                },
+                {
                     path: "/manager/mytoken",
-                    element: <Tokens/>,
+                    element: <Tokens />,
                 },
                 {
                     path: "/manager/outlets",
-                    element: <Outlets/>,
+                    element: <Outlets />,
                 },
                 {
                     path: "/manager/users",
@@ -93,10 +97,10 @@ const Routes = () => {
         },
     ];
 
-    const notfound =  [
+    const notfound = [
         {
             path: "*",
-            element: <NotFound/>,
+            element: <NotFound />,
         }
     ];
 
