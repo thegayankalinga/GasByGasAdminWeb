@@ -37,7 +37,7 @@ function Users() {
             headerName: "User Type",
             width: 100,
             valueGetter: (params) => {
-                switch (params.userType) {
+                switch (params) {
                     case 0:
                         return "Personal";
                     case 1:
@@ -120,7 +120,7 @@ function Users() {
                 <Header title="User Management" subtitle="List of outlet consumers" />
                 <Box>
                     <TextField label="Search by Email" variant="outlined" value={searchEmail} onChange={handleSearchChange} sx={{ mr: 2 }} />
-                    <Button variant="contained" color="primary" onClick={downloadPDF}>Download as PDF</Button>
+                    {/* <Button variant="contained" color="primary" onClick={downloadPDF}>Download as PDF</Button> */}
                 </Box>
             </Box>
             <Paper sx={{ height: 400, width: "100%" }}>

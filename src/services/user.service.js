@@ -24,6 +24,9 @@ class UserService {
   updateRemainingCylinders(email, data) {
     return axios.put(API_URL + '/account/updateReminaingCylinders/'+email, data, { headers: authHeader() });
   }
+  getUsersByOutletId(selectedOutlet){
+    return axios.get(API_URL + '/account/getManagers/'+selectedOutlet, { headers: authHeader() });
+  }
 }
 
 export default new UserService();

@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTheme } from "@mui/material/styles";
 import { tokens } from "../../theme/theme";
-import React from 'react'; // Import React
+import React from 'react';
 
 function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
   const theme = useTheme();
@@ -27,6 +27,7 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
     noOfCylindersAllowed: "",
     isConfirm: false,
     remainingCylindersAllowed: "",
+    businessRegistration: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,6 +39,7 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
         noOfCylindersAllowed: rowData.noOfCylindersAllowed || "",
         isConfirm: rowData.isConfirm || false,
         remainingCylindersAllowed: rowData.remainingCylindersAllowed || "",
+        businessRegistration: rowData.businessRegistration || "",
       });
     }
   }, [rowData]);
@@ -49,13 +51,14 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
         noOfCylindersAllowed: "",
         isConfirm: false,
         remainingCylindersAllowed: "",
+        businessRegistration: "",
       });
     }
   }, [open]);
 
   const handleChange = (e) => {
-    const { name, type, checked, value } = e.target;
-    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleUpdate = async (updateType) => {
@@ -85,7 +88,7 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
       if (response && response.status === 200) {
         toast.success(`User ${updateType} updated successfully.`);
         fetchData();
-        handleClose(); // Close the popup here
+        handleClose();
       } else {
         toast.error(`Failed to update user ${updateType}.`);
       }
@@ -100,7 +103,6 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Edit User Details</DialogTitle>
-      <DialogContent>
       <DialogContent>
         <TextField
           label="Email"
@@ -140,7 +142,15 @@ function UserUpdatePopup({ open, handleClose, rowData, fetchData }) {
           fullWidth
           margin="dense"
         />
-      </DialogContent>
+        <TextField
+          label="Business Registration"
+          name="businessRegistration"
+          value={formData.businessRegistration}
+          onChange={handleChange}
+          fullWidth
+          margin="dense"
+          style={{ display: formData.businessRegistration ? 'block' : 'none' }} // Conditional display
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">

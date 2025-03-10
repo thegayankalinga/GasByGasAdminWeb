@@ -20,7 +20,7 @@ import OutletService from "./../../../services/outlet.service";
 const columns = [
     { field: "outletName", headerName: "Outlet Name", width: 200 },
     { field: "outletAddress", headerName: "Outlet Address", width: 200 },
-    { field: "city", headerName: "City", type: "number", width: 200 },
+    { field: "city", headerName: "City", width: 200 },
     { field: "stock", headerName: "Stock", width: 200 }
 ];
 
