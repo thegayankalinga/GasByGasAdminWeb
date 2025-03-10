@@ -138,11 +138,11 @@ function Dashboard() {
                               Pending Tokens: {statusCounts.Pending}
                           </Typography>
                       }
-                      // icon={
-                      //     <PropaneTankIcon
-                      //         sx={{ color: colors.orange[500], fontSize: "50px" }}
-                      //     />
-                      // }
+                      icon={
+                          <PropaneTankIcon
+                              sx={{ color: colors.orange[500], fontSize: "50px" }}
+                          />
+                      }
                   />
               </Box>
               <Box

@@ -11,6 +11,9 @@ class StockService {
   getStock(outletId) {
     return axios.get(API_URL + '/stocks/by-outlet/'+outletId,{ headers: authHeader() });
   }
+  getStock() {
+    return axios.get(API_URL + '/stocks',{ headers: authHeader() });
+  }
 }
 
 export default new StockService();

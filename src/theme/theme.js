@@ -18,6 +18,10 @@ export const tokens = (mode) => ({
           800: "#292929",
           900: "#141414",
         },
+        orange: {
+          500: "#FFA500", // Example orange color
+          // ... other orange shades
+      },
         primary: {
           100: "#d0d1d5",
           200: "#a1a4ab",

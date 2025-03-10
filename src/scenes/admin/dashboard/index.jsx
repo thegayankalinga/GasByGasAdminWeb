@@ -1,28 +1,19 @@
 import {
   Box,
-  Button,
-  IconButton,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  Header,
-  ProgressCircle,
-  StatBox,
-} from "../../../components";
-import {
-  DownloadOutlined,
-  Traffic,
-} from "@mui/icons-material";
+import { Header, StatBox } from "../../../components";
 import PersonIcon from '@mui/icons-material/Person';
 import PropaneTankIcon from '@mui/icons-material/PropaneTank';
 import { tokens } from "../../../theme/theme";
-import { mockTransactions } from "../../../data/mockData";
 import userService from "./../../../services/user.service";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import StoreIcon from '@mui/icons-material/Store';
-import { SystemUserType, getSystemUserType } from "./../../../utils/SystemUserType";
+import { getSystemUserType } from "./../../../utils/SystemUserType";
+import StockService from "../../../services/stock.service"; // Import StockService
+import { useState, useEffect } from 'react';
 
 function AdminDashboard() {
   const theme = useTheme();
@@ -31,13 +22,58 @@ function AdminDashboard() {
   const isMdDevices = useMediaQuery("(min-width: 724px)");
   const isXsDevices = useMediaQuery("(max-width: 436px)");
   const user = userService.getCurrentUser();
+
+  const [pendingStockRequests, setPendingStockRequests] = useState(0);
+  const [completedStockRequests, setCompletedStockRequests] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStockData = async () => {
+      setLoading(true);
+      try {
+        const response = await StockService.getStock();
+        if (response && Array.isArray(response.data)) {
+          let pendingCount = 0;
+          let completedCount = 0;
+
+          response.data.forEach(stock => {
+            if (stock.completed) {
+              completedCount++;
+            } else {
+              pendingCount++;
+            }
+          });
+
+          setPendingStockRequests(pendingCount);
+          setCompletedStockRequests(completedCount);
+        } else {
+          setError("Stock data fetching error");
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStockData();
+  }, []);
+
+  if (loading) {
+    return <Box m="20px">Loading...</Box>;
+  }
+
+  if (error) {
+    return <Box m="20px">Error: {error}</Box>;
+  }
+
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
       </Box>
 
-      {/* GRID & CHARTS */}
       <Box
         display="grid"
         gridTemplateColumns={
@@ -50,7 +86,6 @@ function AdminDashboard() {
         gridAutoRows="140px"
         gap="20px"
       >
-        {/* Statistic Items */}
         <Box
           gridColumn="span 3"
           bgcolor={colors.primary[400]}
@@ -61,10 +96,29 @@ function AdminDashboard() {
           <StatBox
             subtitle={
               <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "20px", color: "#FFF" }}>
-                {user.noOfCylindersAllowed} Cylinders Allowed
+                Pending Stock Requests: {pendingStockRequests}
               </Typography>
             }
-            progress={user.noOfCylindersAllowed / 10}
+            icon={
+              <PropaneTankIcon
+                sx={{ color: colors.orange[500], fontSize: "50px" }}
+              />
+            }
+          />
+        </Box>
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <StatBox
+            subtitle={
+              <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "20px", color: "#FFF" }}>
+                Completed Stock Requests: {completedStockRequests}
+              </Typography>
+            }
             icon={
               <PropaneTankIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
@@ -72,149 +126,7 @@ function AdminDashboard() {
             }
           />
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            subtitle={
-              <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "20px", color: "#FFF" }}>
-                {user.remainingCylindersAllowed} Remaining Cylinders
-              </Typography>
-            }
-            progress={user.remainingCylindersAllowed / 10}
-            icon={
-              <PropaneTankIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            subtitle={
-              <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "20px", color: "#FFF" }}>
-                {(user.isConfirm) ? "Active" : "In Active"} Account
-              </Typography>
-            }
-            icon={
-              <PersonIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            subtitle={
-              <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "20px", color: "#FFF" }}>
-                {getSystemUserType(user.userType)}
-              </Typography>
-            }
-            icon=
-            {user.userType === 0
-              ? <PersonIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
-              />
-              : user.userType === 1
-                ? <StoreIcon
-                  sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
-                />
-                : <WarehouseIcon
-                  sx={{ color: colors.greenAccent[600], fontSize: "50px" }}
-                />}
-          />
-        </Box>
-
-
-        {/* <Box
-          gridColumn={isXlDevices ? "span 4" : "span 3"}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h4" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              textAlign="center"
-              variant="h4"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography textAlign="center">
-              Includes extra misc expenditures and costs
-            </Typography>
-          </Box>
-        </Box> */}
-
        
-        {/* <Box
-          gridColumn={isXlDevices ? "span 4" : "span 3"}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h4"
-            fontWeight="600"
-            sx={{ p: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            height="250px"
-            mt="-20px"
-          >
-            asdasdasd
-          </Box>
-        </Box> */}
-
-       
-        {/* <Box
-          gridColumn={isXlDevices ? "span 4" : "span 3"}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography variant="h4" fontWeight="600" mb="15px">
-            Geography Based Traffic
-          </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            height="200px"
-          >
-            adasdasdasd
-          </Box>
-        </Box> */}
       </Box>
     </Box>
   );
