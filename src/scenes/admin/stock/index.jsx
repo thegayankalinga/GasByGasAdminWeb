@@ -88,16 +88,16 @@ function StockAdmin() {
         { field: "completed", headerName: "Completed", width: 100, valueGetter: (params) => params.completed ? "Yes" : "No" },
         { field: "noOfUnitsRequired", headerName: "Units Required", width: 130 },
         { field: "noOfUnitsDispatched", headerName: "Units Dispatched", width: 150 },
-        {
-            field: "edit",
-            headerName: "Action",
-            width: 100,
-            renderCell: (params) => (
-                <IconButton onClick={() => handleOpenUpdatePopup(params.row)}>
-                    <Edit />
-                </IconButton>
-            ),
-        },
+        // {
+        //     field: "edit",
+        //     headerName: "Action",
+        //     width: 100,
+        //     renderCell: (params) => (
+        //         <IconButton onClick={() => handleOpenUpdatePopup(params.row)}>
+        //             <Edit />
+        //         </IconButton>
+        //     ),
+        // },
     ];
 
     const handlePopupOpen = () => setIsPopupOpen(true);
