@@ -18,7 +18,8 @@ import StockService from "./../../services/stock.service";
 import StockAddPopup from "./../../components/stock/StackAddPopup";
 import StockUpdatePopup from "./../../components/stock/StockUpdatePopup";
 import userService from "./../../services/user.service";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify'; // 
+
 import 'react-toastify/dist/ReactToastify.css';
 
 const paginationModel = { page: 0, pageSize: 5 };
@@ -39,7 +40,7 @@ function Stock() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await StockService.getStock(user.outletId);
+            const response = await StockService.getStockByOutletId(user.outletId);
             if (response && Array.isArray(response.data)) {
                 setData(response.data);
                 setLoading(false);
@@ -69,11 +70,35 @@ function Stock() {
         setIsUpdatePopupOpen(false);
         setSelectedStock(null);
     };
+    const handleUpdatePopupClose = () => {
+        setIsUpdatePopupOpen(false);
+    };
 
-    const handleUpdateSubmit = (updatedStockData) => {
-        // Call the updateStock function (passed as a prop) to update the stock
-        updateStock(updatedStockData);
-        handleUpdatePopupClose();
+    const handleUpdateSubmit = async (updatedStockData) => {
+        try {
+            const response = await StockService.updateStock(updatedStockData);
+
+            if (response && response.status === 200) {
+                if (response.data && response.data.message) {
+                    toast.success('Stock updated successfully!');
+                } else {
+                    toast.success('Stock updated successfully!');
+                }
+                handleUpdatePopupClose();
+                fetchData();
+            } else if (response && response.status === 204) {
+                toast.info('Stock data was not modified.');
+                handleUpdatePopupClose();
+            } else {
+                toast.error('Failed to update stock. Please try again.');
+            }
+        } catch (error) {
+            console.error("Error updating stock:", error);
+            toast.error('Failed to update stock. Please try again.');
+        } finally {
+            handleUpdatePopupClose();
+        }
+
     };
 
 

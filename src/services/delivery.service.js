@@ -17,6 +17,9 @@ class DeliveryService {
   updateDelivery(id, data) {
     return axios.put(API_URL + '/delivery/'+id,data,{ headers: authHeader() });
   }
+  scheduleRunner() {
+    return axios.post(API_URL + '/scheduler/run-now', { headers: authHeader() });
+  }
 }
 
 export default new DeliveryService();

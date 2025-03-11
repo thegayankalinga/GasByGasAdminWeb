@@ -8,11 +8,14 @@ class StockService {
     return axios.post(API_URL + '/stocks', data,{ headers: authHeader() });
   }
 
-  getStock(outletId) {
+  getStockByOutletId(outletId) {
     return axios.get(API_URL + '/stocks/by-outlet/'+outletId,{ headers: authHeader() });
   }
   getStock() {
     return axios.get(API_URL + '/stocks',{ headers: authHeader() });
+  }
+  updateStock(data) {
+    return axios.put(API_URL + '/stocks/'+data.id,data,{ headers: authHeader() });
   }
 }
 

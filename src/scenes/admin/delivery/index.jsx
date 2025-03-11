@@ -16,7 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import StockService from "./../../../services/stock.service";
 import userService from "./../../../services/user.service";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer , toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateDeliveryPopup from "../../../components/delivery/CreateDeliveryPopup";
 import OutletService from "../../../services/outlet.service";
@@ -91,6 +91,16 @@ function DeliverySchedule() {
         handleCloseUpdatePopup();
     };
 
+    const handleScheduleAlert = async () => {
+        try {
+            const response = await DeliveryService.scheduleRunner(); 
+             toast.success('Schedule runner successfully started');
+        } catch (error) {
+           console.log(error);
+            // toast.success('Schedule runner successfully started');
+        }
+    };
+
     useEffect(() => {
         fetchData();
         fetchOutlets();
@@ -157,26 +167,43 @@ function DeliverySchedule() {
             <Box display="flex" justifyContent="space-between">
                 <Header title="Delivery Schedules" />
                 {!isXsDevices && (
-                    <Box>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                bgcolor: colors.blueAccent[700],
-                                color: "#fcfcfc",
-                                fontSize: isMdDevices ? "14px" : "10px",
-                                fontWeight: "bold",
-                                p: "10px 20px",
-                                mt: "18px",
-                                transition: ".3s ease",
-                                ":hover": { bgcolor: colors.blueAccent[800] },
-                            }}
-                            startIcon={<CreateRounded />}
-                            onClick={handlePopupOpen}
-                        >
-                            Add Delivery
-                        </Button>
-                    </Box>
-                )}
+    <Box>
+        <Button
+            variant="contained"
+            sx={{
+                bgcolor: colors.blueAccent[700],
+                color: "#fcfcfc",
+                fontSize: isMdDevices ? "14px" : "10px",
+                fontWeight: "bold",
+                p: "10px 20px",
+                mt: "18px",
+                transition: ".3s ease",
+                ":hover": { bgcolor: colors.blueAccent[800] },
+            }}
+            startIcon={<CreateRounded />}
+            onClick={handlePopupOpen}
+        >
+            Add Delivery
+        </Button>
+        <Button
+            variant="contained"
+            sx={{
+                bgcolor: colors.greenAccent[700], // Change color as desired
+                color: "#fcfcfc",
+                fontSize: isMdDevices ? "14px" : "10px",
+                fontWeight: "bold",
+                p: "10px 20px",
+                mt: "18px",
+                ml: "10px", // Add left margin for spacing
+                transition: ".3s ease",
+                ":hover": { bgcolor: colors.greenAccent[800] }, // Change hover color
+            }}
+            onClick={handleScheduleAlert} // Add onClick handler
+        >
+            Schedule Alert
+        </Button>
+    </Box>
+)}
             </Box>
             <Paper sx={{ height: 400, width: "100%" }}>
                 <DataGrid
