@@ -21,6 +21,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CreateDeliveryPopup from "../../../components/delivery/CreateDeliveryPopup";
 import OutletService from "../../../services/outlet.service";
 import DeliveryService from "../../../services/delivery.service";
+import UpdateDeliveryPopup from "../../../components/delivery/UpdateDeliveryPopup"; // Import the update popup
 
 const paginationModel = { page: 0, pageSize: 5 };
 
@@ -35,8 +36,8 @@ function DeliverySchedule() {
     const isMdDevices = useMediaQuery("(min-width: 724px)");
     const isXsDevices = useMediaQuery("(max-width: 436px)");
     const [isUpdatePopupOpen, setIsUpdatePopupOpen] = useState(false);
-    const [selectedStock, setSelectedStock] = useState(null);
-    const [outlets, setOutlets] = useState([]); // State to store outlets
+    const [selectedDelivery, setSelectedDelivery] = useState(null); // Changed to selectedDelivery
+    const [outlets, setOutlets] = useState([]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -75,18 +76,18 @@ function DeliverySchedule() {
         }
     };
 
-    const handleOpenUpdatePopup = (stock) => {
-        setSelectedStock(stock);
+    const handleOpenUpdatePopup = (delivery) => { // Changed to delivery
+        setSelectedDelivery(delivery); // Changed to delivery
         setIsUpdatePopupOpen(true);
     };
 
     const handleCloseUpdatePopup = () => {
         setIsUpdatePopupOpen(false);
-        setSelectedStock(null);
+        setSelectedDelivery(null); // Changed to delivery
     };
 
-    const handleUpdateSubmit = (updatedStockData) => {
-        updateStock(updatedStockData);
+    const handleUpdateSubmit = (updatedDeliveryData) => { // Changed to delivery
+        updateStock(updatedDeliveryData);
         handleCloseUpdatePopup();
     };
 
@@ -192,6 +193,14 @@ function DeliverySchedule() {
                 handleClose={handlePopupClose}
                 rowData={user.outletId}
                 fetchData={fetchData}
+                outlets={outlets}
+            />
+
+            <UpdateDeliveryPopup // Add the update popup
+                open={isUpdatePopupOpen}
+                handleClose={handleCloseUpdatePopup}
+                fetchData={fetchData}
+                rowData={selectedDelivery}
                 outlets={outlets}
             />
         </Box>

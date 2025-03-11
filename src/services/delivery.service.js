@@ -14,6 +14,9 @@ class DeliveryService {
   getDelivery() {
     return axios.get(API_URL + '/delivery',{ headers: authHeader() });
   }
+  updateDelivery(id, data) {
+    return axios.put(API_URL + '/delivery/'+id,data,{ headers: authHeader() });
+  }
 }
 
 export default new DeliveryService();
