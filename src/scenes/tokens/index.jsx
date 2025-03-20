@@ -52,7 +52,7 @@ function Tokens() {
             headerName: "Token Status",
             width: 100,
             valueGetter: (params) => {
-                switch (params.status) {
+                switch (params) {
                     case 1:
                         return "Pending";
                     case 2:
