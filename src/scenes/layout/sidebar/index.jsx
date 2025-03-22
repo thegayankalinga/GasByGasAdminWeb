@@ -227,6 +227,7 @@ const SideBar = () => {
           </Menu>
         </Box>
         :
+        (user.userType === 4 && user.isConfirm) ? (
         <Box mb={5} pl={collapsed ? undefined : "5%"}>
           <Menu
             menuItemStyles={{
@@ -293,7 +294,15 @@ const SideBar = () => {
               icon={<ReceiptOutlined />}
             />
           </Menu>
-        </Box>
+        </Box>) 
+        :
+        (
+          <Box mb={5} pl={collapsed ? undefined : "5%"}>
+            <Typography variant="body1" color="error">
+              Account not active
+            </Typography>
+          </Box>
+        )
       }
 
     </Sidebar>

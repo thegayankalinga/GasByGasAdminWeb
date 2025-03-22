@@ -85,6 +85,9 @@ function Dashboard() {
   if (error) {
       return <Box m="20px">Error: {error}</Box>;
   }
+  if (user.userType === 4 && !user.isConfirm)  {
+    return <Box m="20px">Account not active</Box>;
+}
 
   return (
       <Box m="20px">

@@ -52,7 +52,7 @@ function Tokens() {
             headerName: "Token Status",
             width: 100,
             valueGetter: (params) => {
-                switch (params.status) {
+                switch (params) {
                     case 1:
                         return "Pending";
                     case 2:
@@ -182,17 +182,17 @@ function Tokens() {
     const handleFormSubmit = async (formData) => {
         setLoading(true);
         const body = {
-            "expectedPickupDate": formData.expectedPickupDate.format("YYYY-MM-DD"),
-            "paymentDate": formData.paymentDate.format("YYYY-MM-DD"),
+            "expectedPickupDate": formData.expectedPickupDate ? formData.expectedPickupDate.format("YYYY-MM-DD") : null,
+            "paymentDate": formData.paymentDate ? formData.paymentDate.format("YYYY-MM-DD") : null,
             "outletId": formData.outletID,
             "status": formData.status,
             "userEmail": formData.userEmail,
             "deliveryScheduleId": formData.deliveryScheduleId,
             "isEmpltyCylindersGivent": formData.isEmpltyCylindersGiven,
             "isPaid": formData.isPaid,
-            "readyDate": formData.readyDate.format("YYYY-MM-DD"),
+            "readyDate": formData.readyDate ? formData.readyDate.format("YYYY-MM-DD") : null, // Added null check here as well
         };
-
+    
         try {
             const response = await GasTokenService.updateReq(body, formData.id);
             if (response) {
